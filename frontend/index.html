@@ -58,7 +58,7 @@
 </div>
 
 <script>
-const apiBase = '';// served from same origin
+const apiBase = 'https://flight-schedule-optimizer.onrender.com';// served from same origin
 document.getElementById('btnSlots').addEventListener('click', async ()=> {
   try {
     const res = await fetch(apiBase + '/busiest_slots?hour_bucket=1&top=12');
