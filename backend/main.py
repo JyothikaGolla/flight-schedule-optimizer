@@ -127,6 +127,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "..")), name="
 
 @app.get("/", response_class=HTMLResponse)
 def root():
-    index_path = os.path.join(BASE_DIR, "..", "frontend", "index.html")
+    index_path = os.path.join(BASE_DIR, "..", "index.html")  # point to root
     with open(index_path, "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read(), status_code=200)
+
