@@ -123,7 +123,7 @@ def optimize_schedule(max_shift:int=30, step:int=5):
     return JSONResponse(content=best)
 
 # Serve static frontend
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "..", "frontend")), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "..")), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def root():
