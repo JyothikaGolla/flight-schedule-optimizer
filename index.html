@@ -3,145 +3,327 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flight Scheduler — Interactive</title>
+  <title>✈️ Flight Schedule Optimizer</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>body{padding:20px;background:#f8fafc} .card{margin-bottom:16px}</style>
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --secondary-color: #1e40af;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --dark-color: #1f2937;
+      --light-bg: #f8fafc;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    body {
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .main-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 1400px;
+    }
+    
+    .card {
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--card-hover-shadow);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: 15px 15px 0 0 !important;
+      padding: 15px 20px;
+      border: none;
+    }
+    
+    .card-body {
+      padding: 20px;
+    }
+    
+    .btn {
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #059669);
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color), #d97706);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+    
+    .form-control {
+      border-radius: 10px;
+      border: 2px solid #e5e7eb;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    tr.clickable:hover {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      cursor: pointer;
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+    
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, var(--dark-color), #374151);
+      color: white;
+      border: none;
+      padding: 15px;
+    }
+    
+    .table tbody td {
+      padding: 12px 15px;
+      border-color: #f3f4f6;
+    }
+    
+    .status-output {
+      background: #1a1a1a;
+      color: #00ff88;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      border: 2px solid #333;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    .loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .header-title {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: bold;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .search-container {
+      position: relative;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+    }
+    
+    .chart-container {
+      position: relative;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 15px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1 class="mb-3">Flight Scheduler — Interactive Prototype</h1>
+<div class="main-container">
+  <h1 class="header-title">
+    <i class="bi bi-airplane"></i> Flight Schedule Optimizer
+  </h1>
+  
   <div class="row">
     <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Busiest Slots</h5>
-        <p>Show busiest scheduled departure slots (hourly).</p>
-        <button id="btnSlots" class="btn btn-primary btn-sm">Load Slots</button>
-        <canvas id="slotsChart" height="200" style="max-height:240px"></canvas>
+      <!-- Busiest Slots Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-bar-chart-line"></i> Busiest Time Slots</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Analyze peak departure times and traffic patterns</p>
+          <button id="btnSlots" class="btn btn-primary icon-btn w-100">
+            <i class="bi bi-play-circle"></i> Load Traffic Analysis
+          </button>
+          <div class="chart-container">
+            <canvas id="slotsChart" height="200"></canvas>
+          </div>
+        </div>
       </div>
 
-      <div class="card p-3">
-        <h5>Delay Summary</h5>
-        <button id="btnStats" class="btn btn-secondary btn-sm">Load Stats</button>
-        <pre id="statsPre" style="background:#001821;color:#bfefff;padding:8px;border-radius:6px;margin-top:8px"></pre>
+      <!-- Delay Statistics Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-clock-history"></i> Delay Analytics</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Comprehensive delay statistics and trends</p>
+          <button id="btnStats" class="btn btn-secondary icon-btn w-100">
+            <i class="bi bi-graph-up"></i> Generate Report
+          </button>
+          <pre id="statsPre" class="status-output mt-3" style="display:none;"></pre>
+        </div>
       </div>
 
-      <div class="card p-3">
-        <h5>Optimize Schedule</h5>
-        <p>Find a small shift to reduce cascade impact for a candidate flight.</p>
-        <button id="btnOptimize" class="btn btn-success btn-sm">Run Optimizer</button>
-        <pre id="optPre" style="background:#001821;color:#bfefff;padding:8px;border-radius:6px;margin-top:8px"></pre>
+      <!-- Optimize Schedule Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-gear"></i> Schedule Optimizer</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">AI-powered optimization to minimize cascade delays</p>
+          <div class="mb-3">
+            <label for="optFlight" class="form-label">Flight ID (Optional)</label>
+            <input id="optFlight" placeholder="e.g., AI356, I5717..." 
+                   class="form-control" 
+                   autocomplete="off">
+            <div class="form-text">Leave empty to auto-select highest impact flight</div>
+          </div>
+          <button id="btnOptimize" class="btn btn-success icon-btn w-100">
+            <i class="bi bi-lightning"></i> Optimize Schedule
+          </button>
+          <pre id="optPre" class="status-output mt-3" style="display:none;"></pre>
+        </div>
       </div>
     </div>
 
     <div class="col-md-8">
-      <div class="card p-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <h5>Search Flights</h5>
-          <div>
-            <input id="q" placeholder="Flight ID / Airline / Dest" class="form-control form-control-sm" style="display:inline-block;width:240px">
-            <button id="btnSearch" class="btn btn-outline-primary btn-sm">Search</button>
-          </div>
+      <!-- Search Flights Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-search"></i> Flight Database</h5>
         </div>
-        <div id="searchRes" style="max-height:480px;overflow:auto;margin-top:12px"></div>
+        <div class="card-body">
+          <div class="d-flex gap-3 align-items-end mb-3">
+            <div class="flex-grow-1">
+              <label for="q" class="form-label">Search Flights</label>
+              <div class="search-container">
+                <input id="q" 
+                       placeholder="Flight ID, Airline, or Destination..." 
+                       class="form-control pe-5">
+                <i class="bi bi-search search-icon"></i>
+              </div>
+            </div>
+            <button id="btnSearch" class="btn btn-primary icon-btn">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+          <div id="searchRes" class="fade-in" style="max-height:500px;overflow:auto;"></div>
+        </div>
       </div>
 
-      <div class="card p-3">
-        <h5>Top Cascade Flights</h5>
-        <button id="btnCascade" class="btn btn-warning btn-sm">Load Top Cascade</button>
-        <div id="cascadeRes" style="margin-top:8px"></div>
+      <!-- Top Cascade Flights Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> High-Impact Flights</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Flights with highest cascade delay potential</p>
+          <button id="btnCascade" class="btn btn-warning icon-btn">
+            <i class="bi bi-list-ol"></i> Load Critical Flights
+          </button>
+          <div id="cascadeRes" class="mt-3"></div>
+        </div>
       </div>
     </div>
   </div>
-  <hr>
-  <footer class="text-muted">Prototype — data synthetic. Backend must be running at <code>https://flight-schedule-optimizer.onrender.com</code></footer>
+  
+  <hr class="my-4">
+  <footer class="text-center text-muted">
+    <i class="bi bi-info-circle"></i> 
+    Flight Schedule Optimizer - AI-powered delay reduction system
+    <br>
+    <small>Backend running at <code>https://flight-schedule-optimizer.onrender.com</code></small>
+  </footer>
 </div>
 
-<script>
-const apiBase = 'https://flight-schedule-optimizer.onrender.com';// served from same origin
-document.getElementById('btnSlots').addEventListener('click', async ()=> {
-  try {
-    const res = await fetch(apiBase + '/busiest_slots?hour_bucket=1&top=12');
-    const result = await res.json();
-
-    console.log("📊 Backend response:", result);
-
-    const labels = result.labels;
-    const vals = result.data;
-
-    if (!labels || labels.length === 0) {
-      alert("⚠️ No data received from backend!");
-      return;
-    }
-
-    const canvas = document.getElementById('slotsChart');
-    if (!canvas) {
-      alert("❌ slotsChart canvas not found in HTML!");
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    // ✅ Safe destroy
-    if (window.slotsChart instanceof Chart) {
-      window.slotsChart.destroy();
-    }
-
-    window.slotsChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets:[{
-          label: 'Flights',
-          data: vals,
-          backgroundColor: 'rgba(54, 162, 235, 0.7)'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { x: { ticks: { autoSkip: false } } }
-      }
-    });
-
-    console.log("✅ Chart rendered successfully");
-
-  } catch (err) {
-    console.error("❌ Error loading slots:", err);
-    alert("Error loading busiest slots");
-  }
-});
-
-
-document.getElementById('btnStats').addEventListener('click', async ()=>{
-  const res = await fetch(apiBase + '/delay_stats');
-  const d = await res.json();
-  document.getElementById('statsPre').textContent = JSON.stringify(d, null, 2);
-});
-
-document.getElementById('btnOptimize').addEventListener('click', async ()=>{
-  document.getElementById('optPre').textContent = 'Running...';
-  const res = await fetch(apiBase + '/optimize_schedule', {method:'POST'});
-  const d = await res.json();
-  document.getElementById('optPre').textContent = JSON.stringify(d, null, 2);
-});
-
-document.getElementById('btnSearch').addEventListener('click', async ()=>{
-  const q = document.getElementById('q').value;
-  const res = await fetch(apiBase + '/search_flights?q=' + encodeURIComponent(q) + '&limit=100');
-  const data = await res.json();
-  const container = document.getElementById('searchRes');
-  container.innerHTML = '<table class="table table-sm"><thead><tr><th>Flight</th><th>Airline</th><th>Dest</th><th>Sched Dep</th><th>Delay</th></tr></thead><tbody>' +
-    data.map(r=>`<tr><td>${r.Flight_ID}</td><td>${r.Airline}</td><td>${r.Destination}</td><td>${r.Scheduled_Departure}</td><td>${r.Delay_Minutes}</td></tr>`).join('') +
-    '</tbody></table>';
-});
-
-document.getElementById('btnCascade').addEventListener('click', async ()=>{
-  const res = await fetch(apiBase + '/top_cascade_flights?window_min=120&top=10');
-  const data = await res.json();
-  const container = document.getElementById('cascadeRes');
-  container.innerHTML = '<ol>' + data.map(r=>`<li><b>${r.Flight_ID}</b> (${r.Airline}) — Score: ${r.cascade_score} — Delay: ${r.Delay_Minutes} — ${r.Scheduled_Departure}</li>`).join('') + '</ol>';
-});
-</script>
+<!-- External JavaScript -->
+<script src="script.js"></script>
 </body>
 </html>
