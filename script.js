@@ -59,8 +59,8 @@ document.getElementById('btnSlots').addEventListener('click', async ()=> {
         datasets: [{ 
           label: 'Number of Flights', 
           data: vals, 
-          backgroundColor: 'rgba(59, 130, 246, 0.8)',
-          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(34,197,94,0.8)', // green
+          borderColor: 'rgba(34,197,94,1)', // green
           borderWidth: 2,
           borderRadius: 8,
           borderSkipped: false,
